@@ -1,0 +1,3 @@
+[submodule "kbengine"]
+	path = kbengine
+	url = https://github.com/CyrusZhou-CN/kbengine.git
