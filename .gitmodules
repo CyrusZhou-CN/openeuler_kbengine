@@ -1,3 +1,6 @@
 [submodule "kbengine"]
 	path = kbengine
 	url = https://github.com/CyrusZhou-CN/kbengine.git
+[submodule "docker/kbengine_stresstest"]
+	path = docker/kbengine_stresstest
+	url = https://github.com/CyrusZhou-CN/kbengine_stresstest.git
