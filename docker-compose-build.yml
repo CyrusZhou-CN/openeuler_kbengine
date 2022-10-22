@@ -1,0 +1,79 @@
+version: "3"
+services:
+  server01:
+    image: lsqtzj/openeuler_kbengine:${KBENGINE_VERSION}
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    #restart: always
+    container_name: server01
+    hostname: server01
+    networks:
+      gauss:
+        ipv4_address: 10.9.0.10
+    ports:
+      - 8001:8000
+      - 20013:20013
+      - 21103:21103
+      - 20015-20115:20015-20115
+    command: python manage.py runserver 0.0.0.0:8000
+    environment:
+      TZ: Europe/Rome #Asia/Shanghai 时区
+      MARIADB_HOST: ${MARIADB_HOST}
+      MARIADB_PORT: ${MARIADB_PORT}
+      MARIADB_DATABASE: ${MARIADB_DATABASE}
+      MARIADB_USER: ${MARIADB_USER}
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+      SERVER_NUM: 1
+
+  server02:
+    image: lsqtzj/openeuler_kbengine:${KBENGINE_VERSION}
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    #restart: always
+    container_name: server02
+    hostname: server02
+    networks:
+      gauss:
+        ipv4_address: 10.9.0.11
+    ports:
+      - 8002:8000
+      - 30013:20013
+      - 31103:21103
+      - 30015-30115:20015-20115
+    environment:
+      TZ: Europe/Rome #Asia/Shanghai 时区
+      MARIADB_HOST: ${MARIADB_HOST}
+      MARIADB_PORT: ${MARIADB_PORT}
+      MARIADB_DATABASE: ${MARIADB_DATABASE}
+      MARIADB_USER: ${MARIADB_USER}
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+      SERVER_NUM: 2
+
+  db_server:
+    image: lsqtzj/openeuler_mariadb
+    restart: always
+    container_name: db_server
+    hostname: db_server
+    networks:
+      gauss:
+        ipv4_address: 10.9.0.20
+    ports:
+      - 9306:3306
+    volumes:
+      - ./docker/kbe.sql:/docker-entrypoint-initdb.d/kbe.sql
+    environment:
+      TZ: Europe/Rome #Asia/Shanghai 时区
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      MARIADB_DATABASE: ${MARIADB_DATABASE}
+      MARIADB_USER: ${MARIADB_USER}
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+
+networks:
+  gauss:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.9.0.0/16
+          gateway: 10.9.0.1
