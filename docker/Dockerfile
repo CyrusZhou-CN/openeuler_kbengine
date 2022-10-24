@@ -24,7 +24,8 @@ RUN tar -zxvf Python-3.7.8rc1.tgz && rm -f Python-3.7.8rc1.tgz && cd /opt/Python
 
 FROM builder_py AS builder
 # 本地编译 kbengine
-COPY ./kbengine/ /opt/kbengine/ 
+COPY ./kbengine/ $KBE_ROOT/
+COPY ./docker/kbengine_stresstest/mmorpg/server_assets $KBE_ROOT/assets
 RUN find  . -type f -print0 | xargs -0 sed -i "s/\r//g"
 RUN cd $KBE_ROOT/kbe/src/ && make -j4 
 
@@ -48,8 +49,6 @@ RUN yum install -y mysql-devel
 RUN pip install asgiref==3.5.2 sqlparse==0.4.3 pytz==2022.4 mysqlclient==1.3.14
 COPY ./docker/main.sh /opt/main.sh
 RUN chmod +x /opt/main.sh
-COPY ./docker/kbengine_stresstest/mmorpg/server_assets /opt/kbengine/assets
-RUN cd /opt/kbengine/assets && find  . -type f -print0 | xargs -0 sed -i "s/\r//g"
 RUN cp /opt/kbengine/assets/res/server/kbengine.xml /opt/kbengine/assets/res/server/kbengine.xml.bak
 
 RUN yum clean all
